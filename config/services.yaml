@@ -4,6 +4,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    slack.app_id: '%env(SLACK_APP_ID)%'
+    slack.client_secret: '%env(SLACK_CLIENT_SECRET)%'
+    slack.signing_secret: '%env(SLACK_SIGNING_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -30,5 +33,5 @@ services:
         alias: Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener
 
     JoliCode\Slack\Api\Client:
-        factory: ['JoliCode\Slack\ClientFactory', 'create']
+        factory: ['JoliCode\Slack\ClientFactory', create]
         arguments: ['%env(SLACK_BOT_OAUTH_TOKEN)%', '@psr18.http_client']

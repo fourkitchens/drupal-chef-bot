@@ -1,0 +1,16 @@
+security:
+  providers:
+    # used to reload user from session & other features (e.g. switch_user)
+    app_user_provider:
+      id: App\Security\AuthUserProvider
+  firewalls:
+    api:
+      pattern: ^/api/
+      stateless: true
+      guard:
+        authenticators:
+          - App\Security\SlackAuthenticator
+    default:
+      anonymous: ~
+  access_control:
+    - { path: '^/api/', roles: ROLE_SLACK }
