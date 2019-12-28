@@ -31,4 +31,4 @@ services:
 
     JoliCode\Slack\Api\Client:
         factory: ['JoliCode\Slack\ClientFactory', 'create']
-        arguments: ['%env(OAUTH_TOKEN)%', '@psr18.http_client']
+        arguments: ['%env(SLACK_BOT_OAUTH_TOKEN)%', '@psr18.http_client']
