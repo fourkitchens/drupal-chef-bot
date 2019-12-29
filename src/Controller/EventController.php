@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\EventLog;
+use App\Utility\UrlVerification;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,14 +52,17 @@ class EventController extends AbstractFOSRestController {
    */
   public function postEvent(Request $request) {
     $params = json_decode($request->getContent());
-    $event = new EventLog();
-    $event->setData((array) $params);
-    $event->setType($params->type);
-    $event->setDatetime(new \DateTime());
-    $this->entityManager->persist($event);
-    $this->entityManager->flush();
-    if ($params->type === 'url_verification') {
-      return new Response(json_encode(['challenge' => $params->challenge]));
+    if ($params->type ?? '' === 'event_callback') {
+      $event_type = $params->event->type ?? FALSE;
+    }
+    else {
+      $event_type = $params->type ?? FALSE;
+    }
+    if (!$type) {
+      return new Response('', Response::HTTP_BAD_REQUEST);
+    }
+    if ($type === 'url_verification') {
+      return UrlVerification::handle($request);
     }
     return new Response('');
   }
