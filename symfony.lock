@@ -90,6 +90,15 @@
             "config/packages/fos_rest.yaml"
         ]
     },
+    "guzzlehttp/guzzle": {
+        "version": "6.5.2"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
+    },
     "hoa/compiler": {
         "version": "3.17.08.08"
     },
@@ -128,6 +137,9 @@
     },
     "hoa/zformat": {
         "version": "1.17.01.10"
+    },
+    "hussainweb/drupal-api-client": {
+        "version": "1.0"
     },
     "jane-php/json-schema-runtime": {
         "version": "v4.5.4"
@@ -262,6 +274,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.1"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",
