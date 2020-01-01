@@ -32,6 +32,12 @@ services:
     sensio_framework_extra.view.listener:
         alias: Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener
 
-    JoliCode\Slack\Api\Client:
+    JoliCode\Slack\Api\Client $slackBotClient:
+        class: JoliCode\Slack\Api\Client
         factory: ['JoliCode\Slack\ClientFactory', create]
         arguments: ['%env(SLACK_OAUTH_TOKEN)%', '@psr18.http_client']
+
+    JoliCode\Slack\Api\Client:
+        class: JoliCode\Slack\Api\Client
+        factory: ['JoliCode\Slack\ClientFactory', create]
+        arguments: ['%env(SLACK_BOT_OAUTH_TOKEN)%', '@psr18.http_client']
