@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Contracts\SlackConnectorInterface;
 use Doctrine\ORM\Mapping\Entity;
 use JoliCode\Slack\Api\Client;
 use JoliCode\Slack\Api\Model\ObjsChannel;
@@ -10,7 +11,7 @@ use JoliCode\Slack\Api\Model\ObjsUser;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
-class SlackConnector
+class SlackConnector implements SlackConnectorInterface
 {
 
     /**
@@ -39,6 +40,18 @@ class SlackConnector
         $this->botClient = $slackBotClient;
         $this->userClient = $slackUserClient;
         $this->logger = $logger;
+    }
+
+    /**
+     * Unfurl a set of URLs
+     *
+     * @param array $form_parameters
+     * @param array $header_parameters
+     * @return \JoliCode\Slack\Api\Model\ChatUnfurlPostResponse200|\JoliCode\Slack\Api\Model\ChatUnfurlPostResponsedefault|\Psr\Http\Message\ResponseInterface|null
+     */
+    public function chatUnfurl(array $form_parameters = [], array $header_parameters = [])
+    {
+        return $this->userClient->chatUnfurl($form_parameters, $header_parameters);
     }
 
     /**

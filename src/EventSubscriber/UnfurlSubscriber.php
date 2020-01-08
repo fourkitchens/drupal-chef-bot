@@ -3,7 +3,9 @@
 namespace App\EventSubscriber;
 
 use App\Contracts\DrupalConnectorInterface;
+use App\Contracts\SlackConnectorInterface;
 use App\Event\SlackEvent;
+use App\SlackConnector;
 use App\Utility\DrupalInfo;
 use JoliCode\Slack\Api\Client;
 use Psr\Log\LoggerAwareInterface;
@@ -12,10 +14,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UnfurlSubscriber implements EventSubscriberInterface, LoggerAwareInterface
 {
-    /**
-     * @var Client
-     */
-    protected $client;
 
     /**
      * @var LoggerInterface
@@ -25,18 +23,23 @@ class UnfurlSubscriber implements EventSubscriberInterface, LoggerAwareInterface
     /**
      * @var DrupalConnectorInterface
      */
-    protected $connector;
+    protected $drupalConnector;
+
+    /**
+     * @var SlackConnectorInterface
+     */
+     protected $slackConnector;
 
     /**
      * Constructs a UnfurlSubscriber object.
      *
-     * @param Client $client
-     * @param DrupalConnectorInterface $connector
+     * @param DrupalConnectorInterface $drupal_connector
+     * @param SlackConnectorInterface $slack_connector
      */
-    public function __construct(Client $client, DrupalConnectorInterface $connector)
+    public function __construct(DrupalConnectorInterface $drupal_connector, SlackConnectorInterface $slack_connector)
     {
-        $this->connector = $connector;
-        $this->client = $client;
+        $this->drupalConnector = $drupal_connector;
+        $this->slackConnector = $slack_connector;
     }
 
     /**
@@ -66,7 +69,7 @@ class UnfurlSubscriber implements EventSubscriberInterface, LoggerAwareInterface
             if (!$nid) {
                 continue;
             }
-            $node = $this->connector->getNode($nid);
+            $node = $this->drupalConnector->getNode($nid);
             $variables = [
                 'url' => $link->url,
                 'title' => $node->title,
@@ -78,7 +81,7 @@ class UnfurlSubscriber implements EventSubscriberInterface, LoggerAwareInterface
             ];
             $variables['tags'] = [];
             foreach ($node->taxonomy_vocabulary_9 as $term) {
-                $name = $this->connector->getTag($term->id);
+                $name = $this->drupalConnector->getTag($term->id);
                 $variables['tags'][] = sprintf("<https://www.drupal.org/project/issues/search?issue_tags=%s|%s>", urlencode($name), $name);
             }
             if ($cid) {
@@ -89,7 +92,7 @@ class UnfurlSubscriber implements EventSubscriberInterface, LoggerAwareInterface
                         $comment_delta = $delta + 1;
                     }
                 }
-                $comment = $this->connector->getComment($cid);
+                $comment = $this->drupalConnector->getComment($cid);
                 $variables['comment_delta'] = $comment_delta;
                 $variables['comment_author'] = $comment->name;
                 $variables['comment_body'] = substr(strip_tags($comment->comment_body->value), 0, 200) . "...";
@@ -103,7 +106,7 @@ class UnfurlSubscriber implements EventSubscriberInterface, LoggerAwareInterface
         }
         try {
             $this->logger->debug(json_encode($unfurls));
-            $result = $this->client->chatUnfurl([
+            $result = $this->slackConnector->chatUnfurl([
                 'channel' => $event->channel,
                 'ts' => $event->message_ts,
                 'unfurls' => json_encode($unfurls)
