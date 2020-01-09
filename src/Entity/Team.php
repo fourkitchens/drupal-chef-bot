@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JoliCode\Slack\Api\Model\ObjsTeam;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
@@ -19,7 +20,7 @@ class Team
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=16)
+     * @ORM\Column(type="string", length=16, unique=true)
      */
     private $teamId;
 
@@ -38,6 +39,12 @@ class Team
      */
     private $users;
 
+  /**
+   * Constructs a Team object.
+   *
+   * @param object|null $team
+   *   A slack team object.
+   */
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -113,5 +120,33 @@ class Team
         }
 
         return $this;
+    }
+
+    /**
+     * @param $team
+     *   A slack team object.
+     *
+     * @return $this
+     */
+    public function updateFromSlackItem($team) :self {
+        if ($this->getTeamId() !== $team->id) {
+            throw new \InvalidArgumentException(sprintf('Attempting to update a %s from slack with the wrong object', __CLASS__));
+        }
+        $this->setName($team->name);
+        $this->setDomain($team->domain);
+        return $this;
+    }
+
+    /**
+     * @param ObjsTeam $team
+     *
+     * @return static
+     */
+    public static function createFromSlackItem(ObjsTeam $team) {
+        $team_entity = new static();
+        $team_entity->setTeamId($team->getId());
+        $team_entity->setName($team->getName());
+        $team_entity->setDomain($team->getDomain());
+        return $team_entity;
     }
 }

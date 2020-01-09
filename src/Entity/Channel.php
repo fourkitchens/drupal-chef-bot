@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JoliCode\Slack\Api\Model\ObjsChannel;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ChannelRepository")
@@ -19,7 +20,7 @@ class Channel
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=16)
+     * @ORM\Column(type="string", length=16, unique=true)
      */
     private $channelId;
 
@@ -38,8 +39,19 @@ class Channel
      */
     private $users;
 
-    public function __construct()
+    /**
+     * Constructs a Channel object.
+     *
+     * @param object|null $channel
+     *   A slack channel object
+     */
+    public function __construct($channel = NULL)
     {
+        if ($channel) {
+            $this->setChannelId($channel->id);
+            $this->setName($channel->name);
+            $this->setTopic($channel->topic->value ?? '');
+        }
         $this->users = new ArrayCollection();
     }
 
@@ -110,5 +122,35 @@ class Channel
         }
 
         return $this;
+    }
+
+    /**
+     * @param $channel
+     *   A slack channel object.
+     *
+     * @return $this
+     */
+    public function updateFromSlackItem($channel) :self {
+        if ($this->getChannelId() !== $channel->id) {
+            throw new \InvalidArgumentException(sprintf('Attempting to update a %s from slack with the wrong object', __CLASS__));
+        }
+        $this->setChannelId($channel->id);
+        $this->setName($channel->name);
+        $this->setTopic($channel->topic->value ?? '');
+        return $this;
+    }
+
+    /**
+     * Create a channel entity from a slack object.
+     *
+     * @param ObjsChannel $channel
+     * @return Channel
+     */
+    public static function createFromSlackItem(ObjsChannel $channel) :Channel {
+        $channel_entity = new static();
+        $channel_entity->setChannelId($channel->getId());
+        $channel_entity->setName($channel->getName());
+        $channel_entity->setTopic($channel->getTopic()->getValue() ?? '');
+        return $channel_entity;
     }
 }

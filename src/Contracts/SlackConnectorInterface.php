@@ -22,6 +22,15 @@ interface SlackConnectorInterface
     public function chatUnfurl(array $form_parameters = [], array $header_parameters = []);
 
     /**
+     * Unfurl a set of URLs
+     *
+     * @param array $form_parameters
+     * @param array $header_parameters
+     * @return \JoliCode\Slack\Api\Model\ChatUnfurlPostResponse200|\JoliCode\Slack\Api\Model\ChatUnfurlPostResponsedefault|\Psr\Http\Message\ResponseInterface|null
+     */
+    public function chatPostMessage(array $form_parameters = [], array $header_parameters = []);
+
+    /**
      * Gets user info from the slack service.
      *
      * @param string $user_id

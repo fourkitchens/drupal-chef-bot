@@ -19,6 +19,16 @@ class ChannelRepository extends ServiceEntityRepository
         parent::__construct($registry, Channel::class);
     }
 
+    public function findOneBySlackId($value): ?Channel
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.channelId = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     // /**
     //  * @return Channel[] Returns an array of Channel objects
     //  */

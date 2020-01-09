@@ -5,10 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JoliCode\Slack\Api\Model\ObjsUser;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="user",indexes={@ORM\Index(name="user_id", columns={"user_id"})})
+ *
  */
 class User
 {
@@ -161,5 +162,22 @@ class User
         }
 
         return $this;
+    }
+
+    /**
+     * @param ObjsUser $user
+     *
+     * @param Team|null $team
+     * @return static
+     */
+    public static function createFromSlackItem(ObjsUser $user, ?Team $team = null): User {
+        $user_entity = new static();
+        $user_entity->setUserID($user->getId());
+        $user_entity->setIsAdmin($user->getIsAdmin());
+        $user_entity->setIsDeleted($user->getDeleted());
+        $user_entity->setName($user->getName());
+        $user_entity->setRealName($user->getRealName());
+        $user_entity->setTeam($team);
+        return $user_entity;
     }
 }

@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
+ * @ORM\Table(name="message",indexes={@ORM\Index(name="message_id", columns={"ts", "channel_id"})})
  */
 class Message
 {
@@ -149,5 +150,23 @@ class Message
         }
 
         return $this;
+    }
+
+    /**
+     * @param Channel $channel
+     * @param User $user
+     * @param string $ts
+     * @param string $text
+     * @param Message|null $parent
+     * @return Message
+     */
+    public static function create(Channel $channel, User $user, string $ts, string $text, ?Message $parent = null): Message {
+        $message = new static();
+        $message->setChannel($channel);
+        $message->setTs($ts);
+        $message->setUser($user);
+        $message->setText($text);
+        $message->setParent($parent);
+        return $message;
     }
 }

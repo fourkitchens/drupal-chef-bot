@@ -102,4 +102,14 @@ class SlackConnector implements SlackConnectorInterface
         throw new \InvalidArgumentException(sprintf("Slack returned an error while trying to retrieve channel %s. Error was %s.", $team_id, $data->getError()));
     }
 
+    /**
+     * Unfurl a set of URLs
+     *
+     * @param array $form_parameters
+     * @param array $header_parameters
+     * @return \JoliCode\Slack\Api\Model\ChatUnfurlPostResponse200|\JoliCode\Slack\Api\Model\ChatUnfurlPostResponsedefault|\Psr\Http\Message\ResponseInterface|null
+     */
+    public function chatPostMessage(array $form_parameters = [], array $header_parameters = []) {
+        $this->botClient->chatPostMessage($form_parameters, $header_parameters);
+    }
 }

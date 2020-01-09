@@ -19,6 +19,16 @@ class TeamRepository extends ServiceEntityRepository
         parent::__construct($registry, Team::class);
     }
 
+    public function findOneBySlackId($value): ?Team
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.teamId = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     // /**
     //  * @return Team[] Returns an array of Team objects
     //  */

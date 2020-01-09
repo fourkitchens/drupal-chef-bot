@@ -19,6 +19,23 @@ class MessageRepository extends ServiceEntityRepository
         parent::__construct($registry, Message::class);
     }
 
+    /**
+     * @param $ts
+     * @param $team_id
+     * @return Message|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByTimestamp($ts, $team_id): ?Message
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.team_id = :team')
+            ->andWhere('m.ts = :ts')
+            ->setParameter('team', $team_id)
+            ->setParameter('ts', $ts)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
     // /**
     //  * @return Message[] Returns an array of Message objects
     //  */
