@@ -112,4 +112,5 @@ class SlackConnector implements SlackConnectorInterface
     public function chatPostMessage(array $form_parameters = [], array $header_parameters = []) {
         $this->botClient->chatPostMessage($form_parameters, $header_parameters);
     }
+
 }

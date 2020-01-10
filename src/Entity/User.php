@@ -56,6 +56,11 @@ class User
      */
     private $channels;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $points;
+
     public function __construct()
     {
         $this->channels = new ArrayCollection();
@@ -178,6 +183,19 @@ class User
         $user_entity->setName($user->getName());
         $user_entity->setRealName($user->getRealName());
         $user_entity->setTeam($team);
+        $user_entity->setPoints(0);
         return $user_entity;
+    }
+
+    public function getPoints(): ?int
+    {
+        return $this->points;
+    }
+
+    public function setPoints(int $points): self
+    {
+        $this->points = $points;
+
+        return $this;
     }
 }

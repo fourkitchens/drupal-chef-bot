@@ -66,7 +66,7 @@ class MessageLogSubscriber implements EventSubscriberInterface {
      */
     public static function getSubscribedEvents() {
         return [
-            SlackEvent::MESSAGE => 'onMessage',
+            SlackEvent::MESSAGE => ['onMessage', 0],
         ];
     }
 
