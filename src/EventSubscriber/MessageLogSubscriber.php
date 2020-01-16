@@ -73,6 +73,10 @@ class MessageLogSubscriber implements EventSubscriberInterface {
     public function onMessage(SlackEvent $event_wrapper)
     {
         $event = $event_wrapper->getEvent();
+        if ($event->subtype ?? SlackEvent::MESSAGE_SUBTYPE_DEFAULT === SlackEvent::MESSAGE_SUBTYPE_BOT_MESSAGE) {
+            return;
+        }
+
         $user_id = $event->user ?? $event->message->user;
         if (!$user_id) {
             throw new \InvalidArgumentException("Could not find user id in message event");

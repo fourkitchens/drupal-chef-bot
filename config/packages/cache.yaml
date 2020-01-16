@@ -18,3 +18,5 @@ framework:
         pools:
             issue_tags.cache:
                 adapter: cache.app
+            plus_plus.cache:
+                adapter: cache.app
