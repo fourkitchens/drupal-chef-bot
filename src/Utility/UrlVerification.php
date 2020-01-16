@@ -3,6 +3,7 @@
 namespace App\Utility;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Handle URL Verification requests.

@@ -89,7 +89,7 @@ class EventController extends AbstractFOSRestController implements LoggerAwareIn
     public function postEvent(Request $request) {
         $request_body_raw = $request->getContent();
         $params = json_decode($request_body_raw);
-        if ($params->type ?? '' === 'event_callback') {
+        if (($params->type ?? '') === 'event_callback') {
             $event_type = $params->event->type ?? FALSE;
         }
         else {
