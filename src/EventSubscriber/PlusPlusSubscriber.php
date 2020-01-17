@@ -140,10 +140,10 @@ class PlusPlusSubscriber implements EventSubscriberInterface
                 $this->original_ts = $event->thread_ts ?? $event->ts;
             }
             $matches = [];
-            preg_match_all('/<@([^>]+)>\s?\+\+/', $this->text, $matches);
+            preg_match_all('/<@([^>]+)>\s?(\+\+|\+=([0-9]+)?)/', $this->text, $matches);
             if ($matches) {
                 $this->for = BotResponse::getFor($this->text);
-                foreach($matches[1] as $user_id) {
+                foreach($matches[1] as $delta => $user_id) {
 
                     $user = $this->userRepository->findOneBySlackId($user_id) ?? User::createFromSlackItem($this->slackConnector->getUser($user_id), $team);
                     $this->entityManager->persist($user);
@@ -156,7 +156,8 @@ class PlusPlusSubscriber implements EventSubscriberInterface
                         ]);
                         continue;
                     }
-                    $user->setPoints($user->getPoints() + 1);
+                    $user->setPoints($user->getPoints() + $matches[3][$delta] ?? 1);
+                    $this->current_count += ($matches[3][$delta] ?? 1) - 1;
                     $this->respondOne($user);
 
                 }
